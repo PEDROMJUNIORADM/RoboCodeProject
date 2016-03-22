@@ -1,0 +1,17 @@
+package optimus.v1;
+
+/**
+ * This agent it will add some intelligent in Optimus Prime.
+ * 
+ * @version 1.0
+ * @author Lucas
+ *
+ */
+public class SmartAgent {
+	
+	public Shoot niceShoot(double distance, double power){
+		Shoot shoot = null;
+		
+		return shoot;
+	}
+}

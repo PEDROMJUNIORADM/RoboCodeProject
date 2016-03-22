@@ -1,0 +1,13 @@
+package optimus.v1;
+
+/**
+ * 
+ * @version 1.0
+ * @author Lucas
+ *
+ */
+public class Shoot {
+	
+	private int count;
+	private double power;
+}

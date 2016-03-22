@@ -1,0 +1,19 @@
+package optimus.v1;
+
+/**
+ * 
+ * @version 1.0
+ * @author Lucas
+ *
+ */
+public class Shoot {
+	
+	private int size;
+	private double power;
+	
+	public Shoot(int size, double power){
+		this.power = power;
+		this.size = size;
+	}
+	
+}

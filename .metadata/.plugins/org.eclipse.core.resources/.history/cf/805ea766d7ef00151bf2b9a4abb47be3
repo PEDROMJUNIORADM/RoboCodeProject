@@ -1,0 +1,26 @@
+package optimus.v1;
+
+/**
+ * This agent it will add some intelligent in Optimus Prime.
+ * 
+ * @version 1.0
+ * @author Lucas
+ *
+ */
+public class SmartAgent {
+	
+	/**
+	 * Prepare a nice shot based on distance of the target, boolet's power and enemy's velocity.
+	 * 
+	 * @param distance
+	 * @param power
+	 * @return
+	 */
+	public Shoot niceShoot(double distance, double power){
+		Shoot shoot = null;
+		
+		
+		
+		return shoot;
+	}
+}

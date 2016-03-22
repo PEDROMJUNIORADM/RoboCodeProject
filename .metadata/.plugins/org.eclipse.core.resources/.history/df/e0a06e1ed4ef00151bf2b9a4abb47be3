@@ -1,0 +1,12 @@
+package optimus.v1;
+
+import robocode.AdvancedRobot;
+
+/**
+ * This is a version of Optimus Prime with Technical shot.
+ * @author Lucas
+ *
+ */
+public class OptimusPrimeV1 extends AdvancedRobot {
+
+}

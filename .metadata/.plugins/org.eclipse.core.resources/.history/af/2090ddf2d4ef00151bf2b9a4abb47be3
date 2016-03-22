@@ -1,0 +1,11 @@
+package optimus.v1;
+
+/**
+ * This agent it will add some intelligent in Optimus Prime.
+ * 
+ * @author Lucas
+ *
+ */
+public class SmartAgent {
+
+}
