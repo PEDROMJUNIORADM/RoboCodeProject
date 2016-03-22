@@ -1,0 +1,13 @@
+package v0;
+
+import robocode.AdvancedRobot;
+
+/**
+ * A simple OptimusPrime roboot
+ * 
+ * @author Lucas
+ *
+ */
+public class OptimusPrimeV0 extends AdvancedRobot {
+
+}
