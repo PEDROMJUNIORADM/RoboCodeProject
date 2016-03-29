@@ -1,0 +1,10 @@
+package util;
+
+public class Moviment {
+	
+	public double front = 0;
+	public double back = 0;
+	public double direita = 0;
+	public double esquerda = 0;
+	
+}

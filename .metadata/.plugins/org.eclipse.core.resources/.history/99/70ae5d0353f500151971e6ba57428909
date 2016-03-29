@@ -1,0 +1,9 @@
+package util;
+
+public class PositionEscape {
+
+	public int posicaoTiro;
+	public int posicaoFuga;
+	public int anguloFuga;
+	public Double tempoResistencia;
+}

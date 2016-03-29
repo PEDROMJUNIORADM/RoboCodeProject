@@ -1,0 +1,28 @@
+package util;
+
+public class FileController {
+
+	public static List<PosicaoFuga> lerArquivo() throws Exception{
+		
+		File arquivo = new File("/home/felipe/naval-robocode/robots/megaman/posicoesDeFuga.txt");
+		List<PosicaoFuga> posicoesFuga = new ArrayList<PosicaoFuga>();
+		if (arquivo.exists()) {
+			Scanner s = new Scanner(arquivo);
+			Pattern pattern = Pattern.compile("\\d+;\\d+;\\d+;\\d+\\.\\d+\\|");
+			while(s.hasNext()){
+				String posicao = s.next(pattern);
+				String[] posicoes = posicao.split(";");
+				PosicaoFuga posicaoFuga = new PosicaoFuga();
+				posicaoFuga.setPosicaoTiro(Integer.parseInt(posicoes[0]));
+				posicaoFuga.setPosicaoFuga(Integer.parseInt(posicoes[1]));
+				posicaoFuga.setAnguloFuga(Integer.parseInt(posicoes[2]));
+				posicaoFuga.setTempoResistencia(Double.parseDouble(posicoes[3].substring(0, posicoes[3].length()-1)));
+				posicoesFuga.add(posicaoFuga);
+			}
+			s.close();
+		}
+
+		return posicoesFuga;
+		
+	}
+}

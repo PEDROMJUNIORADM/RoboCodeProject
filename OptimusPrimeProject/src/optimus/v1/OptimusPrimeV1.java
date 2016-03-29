@@ -1,9 +1,16 @@
 package optimus.v1;
 
+import java.awt.Color;
+
 import robocode.AdvancedRobot;
 import robocode.HitByBulletEvent;
 import robocode.HitWallEvent;
+import robocode.RobotStatus;
 import robocode.ScannedRobotEvent;
+import robocode.StatusEvent;
+import util.Movement;
+import util.Shoot;
+import util.SmartAgent;
 
 /**
  * This is a version of Optimus Prime with Technical shot.
@@ -14,6 +21,9 @@ import robocode.ScannedRobotEvent;
  */
 public class OptimusPrimeV1 extends AdvancedRobot {
 	
+	private boolean updatePosition = false;
+	private RobotStatus robotStatus;
+	private int timeToUpdatePosition = 0;
 	private double enemyLife = 0;
 	private SmartAgent smartAgent = new SmartAgent();
 	
@@ -21,12 +31,24 @@ public class OptimusPrimeV1 extends AdvancedRobot {
 	 * Run Forrest, run!
 	 */
 	public void run() {
-		while(true) {
-			ahead(100);
-			turnGunRight(360);
-			back(100);
-			turnGunRight(360);
+		setColors(Color.red,Color.blue,Color.green); // body,gun,radar
+
+		while (true) {
+			timeToUpdatePosition++;
+			if (timeToUpdatePosition >= 5) {
+				timeToUpdatePosition = 0;
+				updatePosition = true;
+			}
+			// Replace the next 4 lines with any behavior you would like
+			movement();
 		}
+	}
+	
+	/**
+	 * onScannedRobot: What to do when you see another robot
+	 */
+	public void onStatus(StatusEvent e) {
+		this.robotStatus = e.getStatus();
 	}
 
 	/**
@@ -34,13 +56,39 @@ public class OptimusPrimeV1 extends AdvancedRobot {
 	 */
 	public void onScannedRobot(ScannedRobotEvent e) {
 		shoot(e);
+		
+		if (updatePosition) {
+			double angleToEnemy = e.getBearing();
+
+			// Calculate the angle to the scanned robot
+			double angle = Math.toRadians((robotStatus.getHeading() + angleToEnemy % 360));
+
+			// Calculate the coordinates of the robot
+			double posX = (robotStatus.getX() + Math.sin(angle)* e.getDistance());
+			double posY = (robotStatus.getY() + Math.cos(angle)* e.getDistance());
+			smartAgent.updatePosEnimy(posX, posY);
+			
+			updatePosition = false;
+		}
 	}
 
 	/**
 	 * onHitByBullet: What to do when you're hit by a bullet
 	 */
 	public void onHitByBullet(HitByBulletEvent e) {
-		back(10);
+		Movement movimento;
+		try {
+			smartAgent.setPodeMovimentar(false);
+			movimento = smartAgent.foiAtingido(e.getBearing());
+			turnRight(movimento.right);
+			turnLeft(movimento.left);
+			back(movimento.back);
+			ahead(movimento.front);
+			smartAgent.setPodeMovimentar(true);
+		} catch (Exception e1) {
+			smartAgent.setPodeMovimentar(true);
+			e1.printStackTrace();
+		}
 	}
 	
 	/**
@@ -56,11 +104,28 @@ public class OptimusPrimeV1 extends AdvancedRobot {
 	 * @param event
 	 */
 	private void shoot(ScannedRobotEvent event){
-		//enemyLife = e.getEnergy();
-		//turnGunRight(agenteInteligente.mira(e.getBearing(), getHeading(), getGunHeading()));
+		enemyLife = event.getEnergy();
+		turnGunRight(smartAgent.target(event.getBearing(), event.getHeading(), getGunHeading()));
 		Shoot shoot = smartAgent.niceShoot(event.getDistance(), event.getEnergy());
 		for (int i = 0; i < shoot.getSize(); i++) {
 			fire(shoot.getPower());
 		}
 	}
+	
+	/**
+	 * Let's dance baby
+	 */
+	public void movement() { 
+		if (smartAgent.isPodeMovimentar()) {
+			Movement movimento = smartAgent.continuousMovement();
+			turnRight(movimento.right);
+			turnLeft(movimento.left);
+			back(movimento.back);
+			ahead(movimento.front);
+		}
+		turnGunLeft(360);
+	}
+	
+	
+
 }

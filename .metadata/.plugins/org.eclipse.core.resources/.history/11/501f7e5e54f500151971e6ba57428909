@@ -1,0 +1,10 @@
+package util;
+
+public class LastPosition extends PositionEscape {
+	
+	Long shotTime= new Long(0);
+	Long timeToNextShot = new Long(0);
+	
+	
+	
+}

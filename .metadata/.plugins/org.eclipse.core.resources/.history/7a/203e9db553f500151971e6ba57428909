@@ -1,0 +1,52 @@
+package util;
+
+public class PositionEscape {
+
+	public int positionShot;
+	public int positionEscape;
+	public int anguleEscape;
+	public Double timeOfResistance;
+	public int getPositionShot() {
+		return positionShot;
+	}
+	public void setPositionShot(int positionShot) {
+		this.positionShot = positionShot;
+	}
+	public int getPositionEscape() {
+		return positionEscape;
+	}
+	public void setPositionEscape(int positionEscape) {
+		this.positionEscape = positionEscape;
+	}
+	public int getAnguleEscape() {
+		return anguleEscape;
+	}
+	public void setAnguleEscape(int anguleEscape) {
+		this.anguleEscape = anguleEscape;
+	}
+	public Double getTimeOfResistance() {
+		return timeOfResistance;
+	}
+	public void setTimeOfResistance(Double timeOfResistance) {
+		this.timeOfResistance = timeOfResistance;
+	}
+	
+	@Override
+	public String toString() {
+		return "PositionEscape [positionShot=" + positionShot
+				+ ", positionEscape=" + positionEscape + ", anguleEscape="
+				+ anguleEscape + ", timeOfResistance=" + timeOfResistance + "]";
+	}
+	
+	public PositionEscape clone(){
+		PositionEscape posicaoFugaClone = new PositionEscape();
+		posicaoFugaClone.setAnguleEscape(this.getAnguleEscape());
+		posicaoFugaClone.setPosicaoFuga(this.getPositionEscape());
+		posicaoFugaClone.setPosicaoTiro(this.getPosicaoTiro());
+		posicaoFugaClone.setTempoResistencia(this.getTempoResistencia());
+		
+		return posicaoFugaClone;
+	}
+	
+	
+}

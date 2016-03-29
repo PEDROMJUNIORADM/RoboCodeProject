@@ -1,0 +1,83 @@
+package optimus.v1;
+
+import robocode.AdvancedRobot;
+import robocode.HitByBulletEvent;
+import robocode.HitWallEvent;
+import robocode.ScannedRobotEvent;
+import util.Shoot;
+import util.SmartAgent;
+
+/**
+ * This is a version of Optimus Prime with Technical shot.
+ * 
+ * @version 1.0
+ * @author Lucas
+ *
+ */
+public class OptimusPrimeV1 extends AdvancedRobot {
+	
+	boolean updatePosition = false;
+	private double enemyLife = 0;
+	private SmartAgent smartAgent = new SmartAgent();
+	
+	/**
+	 * Run Forrest, run!
+	 */
+	public void run() {
+		while(true) {
+			ahead(100);
+			turnGunRight(360);
+			back(100);
+			turnGunRight(360);
+		}
+	}
+
+	/**
+	 * onScannedRobot: What to do when you see another robot
+	 */
+	public void onScannedRobot(ScannedRobotEvent e) {
+		shoot(e);
+		
+		if (updatePosition) {
+			double angleToEnemy = e.getBearing();
+
+			// Calculate the angle to the scanned robot
+			double angle = Math.toRadians((robotStatus.getHeading() + angleToEnemy % 360));
+
+			// Calculate the coordinates of the robot
+			double posX = (robotStatus.getX() + Math.sin(angle)* e.getDistance());
+			double posY = (robotStatus.getY() + Math.cos(angle)* e.getDistance());
+			agenteInteligente.updatePosInimigo(posX, posY);
+			
+			updatePosition = false;
+		}
+	}
+
+	/**
+	 * onHitByBullet: What to do when you're hit by a bullet
+	 */
+	public void onHitByBullet(HitByBulletEvent e) {
+		back(10);
+	}
+	
+	/**
+	 * onHitWall: What to do when you hit a wall
+	 */
+	public void onHitWall(HitWallEvent e) {
+		back(20);
+	}
+	
+	/**
+	 * Take a shoot
+	 * 
+	 * @param event
+	 */
+	private void shoot(ScannedRobotEvent event){
+		enemyLife = event.getEnergy();
+		turnGunRight(smartAgent.target(event.getBearing(), event.getHeading(), getGunHeading()));
+		Shoot shoot = smartAgent.niceShoot(event.getDistance(), event.getEnergy());
+		for (int i = 0; i < shoot.getSize(); i++) {
+			fire(shoot.getPower());
+		}
+	}
+}

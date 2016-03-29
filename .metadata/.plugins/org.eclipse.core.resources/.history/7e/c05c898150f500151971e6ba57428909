@@ -1,0 +1,22 @@
+package util;
+
+public class Moviment {
+	
+	public double front = 0;
+	public double back = 0;
+	public double right = 0;
+	public double left = 0;
+	
+	public Moviment() {
+		super();
+	}
+
+	public Moviment(double front, double back, double right, double left) {
+		super();
+		this.front = front;
+		this.back = back;
+		this.right = right;
+		this.left = left;
+	}
+	
+}

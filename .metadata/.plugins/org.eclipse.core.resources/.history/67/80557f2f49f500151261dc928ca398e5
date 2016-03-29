@@ -1,0 +1,66 @@
+package optimus.v1;
+
+import robocode.AdvancedRobot;
+import robocode.HitByBulletEvent;
+import robocode.HitWallEvent;
+import robocode.ScannedRobotEvent;
+
+/**
+ * This is a version of Optimus Prime with Technical shot.
+ * 
+ * @version 1.0
+ * @author Lucas
+ *
+ */
+public class OptimusPrimeV1 extends AdvancedRobot {
+	
+	private double enemyLife = 0;
+	private SmartAgent smartAgent = new SmartAgent();
+	
+	/**
+	 * Run Forrest, run!
+	 */
+	public void run() {
+		while(true) {
+			ahead(100);
+			turnGunRight(360);
+			back(100);
+			turnGunRight(360);
+		}
+	}
+
+	/**
+	 * onScannedRobot: What to do when you see another robot
+	 */
+	public void onScannedRobot(ScannedRobotEvent e) {
+		shoot(e);
+	}
+
+	/**
+	 * onHitByBullet: What to do when you're hit by a bullet
+	 */
+	public void onHitByBullet(HitByBulletEvent e) {
+		back(10);
+	}
+	
+	/**
+	 * onHitWall: What to do when you hit a wall
+	 */
+	public void onHitWall(HitWallEvent e) {
+		back(20);
+	}
+	
+	/**
+	 * Take a shoot
+	 * 
+	 * @param event
+	 */
+	private void shoot(ScannedRobotEvent event){
+		//enemyLife = event.getEnergy();
+		//turnGunRight(smartAgent.target(event.getBearing(), event.getHeading(), getGunHeading()));
+		Shoot shoot = smartAgent.niceShoot(event.getDistance(), event.getEnergy());
+		for (int i = 0; i < shoot.getSize(); i++) {
+			fire(shoot.getPower());
+		}
+	}
+}
