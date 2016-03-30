@@ -2,30 +2,37 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="shotAngle" key="selection"/>
+		<item value="positionsEscape" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="dirGun"/>
+			<item value="posicoesFuga"/>
+			<item value="arquivo"/>
+			<item value="melhorPosicao"/>
+			<item value="posicaoFuga"/>
+			<item value="melhorPosicaoFuga"/>
+			<item value="anguloMovimento"/>
 			<item value="anguloTiro"/>
-			<item value="TaticaTiro"/>
-			<item value="distancia"/>
-			<item value="energia"/>
+			<item value="anguloAtingido"/>
 		</list>
 		<list key="replacehistory">
-			<item value="shotAngle"/>
-			<item value="Shoot"/>
-			<item value="distance"/>
-			<item value="power"/>
+			<item value="positionsEscape"/>
+			<item value="file"/>
+			<item value="bestPosition"/>
+			<item value="postionEscape"/>
+			<item value="bestPositionEscape"/>
+			<item value="positionEscape"/>
+			<item value="angleMovement"/>
+			<item value="angleShot"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item value="257" key="DIALOG_WIDTH"/>
 		<item value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
 		<item value="381" key="DIALOG_HEIGHT"/>
-		<item value="900" key="DIALOG_X_ORIGIN"/>
-		<item value="136" key="DIALOG_Y_ORIGIN"/>
+		<item value="102" key="DIALOG_X_ORIGIN"/>
+		<item value="114" key="DIALOG_Y_ORIGIN"/>
 	</section>
 </section>

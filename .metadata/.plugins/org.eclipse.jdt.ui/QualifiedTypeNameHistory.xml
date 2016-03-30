@@ -2,4 +2,10 @@
 <qualifiedTypeNameHistroy>
 <fullyQualifiedTypeName name="optimus.v1.SmartAgent"/>
 <fullyQualifiedTypeName name="optimus.v1.Shoot"/>
+<fullyQualifiedTypeName name="robocode.RoundEndedEvent"/>
+<fullyQualifiedTypeName name="util.PositionEscape"/>
+<fullyQualifiedTypeName name="java.awt.image.SampleModel"/>
+<fullyQualifiedTypeName name="util.FileController"/>
+<fullyQualifiedTypeName name="util.SmartAgent"/>
+<fullyQualifiedTypeName name="megaman.SmartAgent"/>
 </qualifiedTypeNameHistroy>
