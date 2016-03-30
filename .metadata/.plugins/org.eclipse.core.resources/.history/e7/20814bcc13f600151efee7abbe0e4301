@@ -1,0 +1,9 @@
+package megaman;
+
+public class Snippet {
+	public static void main(String[] args) {
+		import org.omg.CORBA.ULongSeqHolder;
+		
+	}
+}
+

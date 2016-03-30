@@ -1,0 +1,56 @@
+package megaman;
+
+public class PositionEscape {
+	
+	public int positionShot;
+	public int posicaoFuga;
+	public int anguloFuga;
+	public Double tempoResistencia;
+	
+	
+	public Double getTempoResistencia() {
+		return tempoResistencia;
+	}
+	public void setTempoResistencia(Double tempoResistencia) {
+		this.tempoResistencia = tempoResistencia;
+	}
+	public int getPositionShot() {
+		return positionShot;
+	}
+	public void setPositionShot(int posicaoTiro) {
+		this.positionShot = posicaoTiro;
+	}
+	public int getPosicaoFuga() {
+		return posicaoFuga;
+	}
+	public void setPosicaoFuga(int posicaoFuga) {
+		this.posicaoFuga = posicaoFuga;
+	}
+	public int getAnguloFuga() {
+		return anguloFuga;
+	}
+	public void setAnguloFuga(int anguloFuga) {
+		this.anguloFuga = anguloFuga;
+	}
+	
+	public String toString(){
+		
+		String retorno = positionShot+";"+posicaoFuga+";"+anguloFuga+";"+tempoResistencia+"|";
+		
+		return retorno;
+	}
+	
+	
+	public PositionEscape clone(){
+		PositionEscape posicaoFugaClone = new PositionEscape();
+		posicaoFugaClone.setAnguloFuga(this.getAnguloFuga());
+		posicaoFugaClone.setPosicaoFuga(this.getPosicaoFuga());
+		posicaoFugaClone.setPositionShot(this.getPositionShot());
+		posicaoFugaClone.setTempoResistencia(this.getTempoResistencia());
+		
+		return posicaoFugaClone;
+	}
+	
+	
+
+}

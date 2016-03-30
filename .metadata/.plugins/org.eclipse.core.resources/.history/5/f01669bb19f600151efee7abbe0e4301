@@ -1,0 +1,11 @@
+package megaman;
+
+public class Shot {
+	public int quantidade;
+	public double power;
+
+	public Shot(int quantidade, double power) {
+		this.quantidade = quantidade;
+		this.power = power;
+	}
+}

@@ -1,0 +1,41 @@
+package megaman;
+
+public class LastPosition extends PositionEscape {
+	
+	Long timeShot = new Long(0);
+	Long tempoProximoTiro = new Long(0);
+	
+	public LastPosition(PositionEscape posicaoFuga){
+		this.anguloFuga = posicaoFuga.getAnguloFuga();
+		this.posicaoFuga = posicaoFuga.getPosicaoFuga();
+		this.posicaoTiro = posicaoFuga.getPosicaoTiro();
+		this.tempoResistencia = posicaoFuga.getTempoResistencia();
+	}
+	
+	
+	public Long getTempoTiro() {
+		return timeShot;
+	}
+	public void setTempoTiro(Long tempoTiro) {
+		this.timeShot = tempoTiro;
+	}
+	public Long getTempoProximoTiro() {
+		return tempoProximoTiro;
+	}
+	public void setTempoProximoTiro(Long tempoProximoTiro) {
+		this.tempoProximoTiro = tempoProximoTiro;
+	}
+	
+	
+	@Override
+	public String toString(){
+
+		String retorno = posicaoTiro+";"+posicaoFuga+";"+anguloFuga+";"+tempoResistencia+";"+timeShot+";"+tempoProximoTiro+"|";
+			
+		return retorno;
+		
+	}
+	
+	
+
+}

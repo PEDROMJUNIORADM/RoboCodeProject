@@ -1,0 +1,11 @@
+package megaman;
+
+public class TaticaTiro {
+	public int quantidade;
+	public double potencia;
+
+	public TaticaTiro(int quantidade, double potencia) {
+		this.quantidade = quantidade;
+		this.potencia = potencia;
+	}
+}

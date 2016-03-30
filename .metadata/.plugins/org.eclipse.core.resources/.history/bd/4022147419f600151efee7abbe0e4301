@@ -1,0 +1,20 @@
+package megaman;
+
+public class MovementRobot {
+	public double front = 0;
+	public double back = 0;
+	public double direita = 0;
+	public double esquerda = 0;
+	
+	
+	public MovementRobot(){
+		
+	}
+	
+	public MovementRobot(double frente, double tras, double direita, double esquerda) {
+		this.front = frente;
+		this.back = tras;
+		this.direita = direita;
+		this.esquerda = esquerda;
+	}
+}

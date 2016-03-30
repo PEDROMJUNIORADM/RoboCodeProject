@@ -1,0 +1,70 @@
+package megaman;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+
+import robocode.RobocodeFileOutputStream;
+
+
+public class FileController {
+	
+	
+	public FileController(){
+		
+	}
+	
+	
+	public static List<PositionEscape> lerArquivo() throws Exception{
+		
+		File arquivo = new File("C:/robocode/robots/megaman/MegaMan.data/posicoesDeFuga.txt");
+		List<PositionEscape> posicoesFuga = new ArrayList<PositionEscape>();
+		if (arquivo.exists()) {
+			Scanner s = new Scanner(arquivo);
+			Pattern pattern = Pattern.compile("\\d+;\\d+;\\d+;\\d+\\.\\d+\\|");
+			while(s.hasNext()){
+				String posicao = s.next(pattern);
+				String[] posicoes = posicao.split(";");
+				PositionEscape posicaoFuga = new PositionEscape();
+				posicaoFuga.setPosicaoTiro(Integer.parseInt(posicoes[0]));
+				posicaoFuga.setPosicaoFuga(Integer.parseInt(posicoes[1]));
+				posicaoFuga.setAnguloFuga(Integer.parseInt(posicoes[2]));
+				posicaoFuga.setTempoResistencia(Double.parseDouble(posicoes[3].substring(0, posicoes[3].length()-1)));
+				posicoesFuga.add(posicaoFuga);
+			}
+			s.close();
+		}
+
+		return posicoesFuga;
+		
+	}
+	
+	
+	public static void gravarArquivo(List<PositionEscape> posicoesFuga) throws IOException{
+		
+		File arquivo = new File("C:/robocode/robots/megaman/MegaMan.data/posicoesDeFuga.txt");
+		RobocodeFileOutputStream fos = null;
+		try {
+			fos = new RobocodeFileOutputStream(arquivo);
+			for (PositionEscape posicaoFuga : posicoesFuga) {
+				fos.write(posicaoFuga.toString().getBytes());
+				//fos.write("\n".getBytes());
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		fos.close();
+		
+		
+	}
+	
+
+}

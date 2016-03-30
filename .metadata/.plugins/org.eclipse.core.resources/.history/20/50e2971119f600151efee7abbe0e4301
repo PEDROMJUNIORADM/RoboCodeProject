@@ -1,0 +1,165 @@
+package megaman;
+
+import java.awt.Color;
+import java.io.IOException;
+import java.util.Calendar;
+
+import robocode.AdvancedRobot;
+import robocode.HitByBulletEvent;
+import robocode.HitWallEvent;
+import robocode.RobotStatus;
+import robocode.RoundEndedEvent;
+import robocode.ScannedRobotEvent;
+import robocode.StatusEvent;
+
+/**
+ * This is a version of Optimus Prime with Technical shot.
+ * 
+ * @version 1.0
+ * @author Lucas
+ *
+ */
+public class Optimus extends AdvancedRobot {
+
+	private boolean updatePos = false;
+	private int timeToUpdatePosition = 0;
+	private double enemyLife = 0;
+
+	private RobotStatus robotStatus;
+	private SmartAgent smartAgent = new SmartAgent();
+	
+	/**
+	 * Run Forrest, run!
+	 */
+	public void run() {
+		setColors(Color.red,Color.blue,Color.green); // body,gun,radar
+		while (true) {
+			timeToUpdatePosition++;
+			if (timeToUpdatePosition >= 5) {
+				timeToUpdatePosition = 0;
+				updatePos = true;
+			}
+			movimento();
+		}
+	}
+
+	/**
+	 * onScannedRobot: What to do when you see another robot
+	 */
+
+	public void onStatus(StatusEvent e) {
+		this.robotStatus = e.getStatus();
+	}
+
+	public void onScannedRobot(ScannedRobotEvent e) {
+		atirar(e);
+
+		if (updatePos) {
+			double angleToEnemy = e.getBearing();
+
+			// Calculate the angle to the scanned robot
+			double angle = Math
+					.toRadians((robotStatus.getHeading() + angleToEnemy % 360));
+
+			// Calculate the coordinates of the robot
+			double posX = (robotStatus.getX() + Math.sin(angle)
+					* e.getDistance());
+			double posY = (robotStatus.getY() + Math.cos(angle)
+					* e.getDistance());
+			smartAgent.updatePosEnemy(posX, posY);
+			updatePos = false;
+		}
+	}
+
+	/**
+	 * onHitByBullet: What to do when you're hit by a bullet
+	 */
+	public void onHitByBullet(HitByBulletEvent e) {
+		
+		MovementRobot movimento;
+		try {
+			smartAgent.podeMovimentar = false;
+			movimento = smartAgent.hit(e.getBearing());
+			turnRight(movimento.direita);
+			turnLeft(movimento.esquerda);
+			back(movimento.tras);
+			ahead(movimento.frente);
+			smartAgent.podeMovimentar = true;
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			smartAgent.podeMovimentar = true;
+			e1.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * onHitWall: What to do when you hit a wall
+	 */
+	public void onHitWall(HitWallEvent e) {
+		// Replace the next line with any behavior you would like
+		bateuParede(e);
+	}
+
+	public void movimento() {
+
+		System.out.println("Pode movimentar: " + smartAgent.podeMovimentar);
+		if (smartAgent.podeMovimentar) {
+			MovementRobot movimento = smartAgent.continuousMovement();
+			
+			turnRight(movimento.direita);
+			turnLeft(movimento.esquerda);
+			back(movimento.tras);
+			ahead(movimento.frente);
+		}
+
+		turnGunLeft(360);
+
+	}
+
+	public void atirar(ScannedRobotEvent e) { 
+		enemyLife = e.getEnergy();
+		turnGunRight(smartAgent.target(e.getBearing(), getHeading(), getGunHeading()));
+		Shot tatica = smartAgent.niceShot(e.getDistance(),
+				getEnergy());
+		for (int i = 0; i < tatica.quantidade; i++) {
+			fire(tatica.potencia);
+		}
+
+	}
+
+	public void bateuParede(HitWallEvent e) { 
+		// back(500);
+		// turnRight(90);
+		// ahead(100);
+	}
+	
+	
+	public void onRoundEnded(RoundEndedEvent event){
+	
+		if (SmartAgent.lastPosition != null) {
+			SmartAgent.lastPosition.setTimeToNextShot(Calendar.getInstance().getTimeInMillis());
+			
+			for (PositionEscape posicaoFuga : SmartAgent.positionEscapeList) {
+				if (posicaoFuga.getAnguloFuga() == SmartAgent.lastPosition.getAnguloFuga()
+						&& posicaoFuga.getPositionEscape() == SmartAgent.lastPosition.getPositionEscape()
+						&& posicaoFuga.getPositionShot() == SmartAgent.lastPosition.getPositionShot()) {
+					Double tempoResistencia = ((((double) (SmartAgent.lastPosition.getTimeToNextShot() - SmartAgent.lastPosition.getTimeShot()) / 1000)) + posicaoFuga.getTempoResistencia()) / 2;
+					
+					posicaoFuga.setTempoResistencia(tempoResistencia);
+					break;
+					
+				}
+			}
+		}
+		
+		try {
+			FileController.reacordFile(SmartAgent.positionEscapeList);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}   
+
+	
+
+}
