@@ -1,0 +1,178 @@
+package optimus;
+
+import java.awt.Color;
+import java.io.IOException;
+import java.util.Calendar;
+
+import robocode.AdvancedRobot;
+import robocode.HitByBulletEvent;
+import robocode.HitWallEvent;
+import robocode.RobotStatus;
+import robocode.RoundEndedEvent;
+import robocode.ScannedRobotEvent;
+import robocode.StatusEvent;
+
+/**
+ * This is a version of Optimus Prime with Technical shot.
+ * 
+ * @version 1.0
+ * @author Lucas
+ *
+ */
+public class Optimus extends AdvancedRobot {
+
+	private boolean updatePos = false;
+	private int timeToUpdatePosition = 0;
+
+	private RobotStatus robotStatus;
+	private SmartAgent smartAgent = new SmartAgent();
+	
+	/**
+	 * Run Forrest, run!
+	 */
+	public void run() {
+		setColors(Color.RED,Color.YELLOW,Color.WHITE); // body,gun,radar
+		
+		while (true) {
+			timeToUpdatePosition++;
+			if (timeToUpdatePosition >= 5) {
+				timeToUpdatePosition = 0;
+				updatePos = true;
+			}
+			movement();
+		}
+	}
+	
+	public void movement() {
+		if (smartAgent.allowsMovement) {
+			
+			/* Get the diretions */
+			MovementRobot rovementRobot = smartAgent.continuousMovement();
+			
+			turnRight(rovementRobot.rigth);
+			turnLeft(rovementRobot.left);
+			back(rovementRobot.back);
+			ahead(rovementRobot.front);
+		}
+		turnGunLeft(360);
+	}
+
+
+	/**
+	 * onScannedRobot: What to do when you see another robot
+	 */
+
+	public void onStatus(StatusEvent e) {
+		this.robotStatus = e.getStatus();
+	}
+	
+	/**
+	 * onScannedRobot: what to do when you have a target 
+	 */
+	public void onScannedRobot(ScannedRobotEvent e) {
+		headShot(e);
+		updateOptimusPosition(e);
+	}
+	
+	/**
+	 * Shoot!
+	 * 
+	 * @param ScannedRobotEvent
+	 */
+	public void headShot(ScannedRobotEvent e) { 
+		
+		/* Calibrate the target */
+		turnGunRight(smartAgent.target(e.getBearing(), getHeading(), getGunHeading()));
+		
+		/* Prepare a shot */
+		Shot shot = smartAgent.niceShot(e.getDistance(),getEnergy());
+		
+		for (int i = 0; i < shot.bullets; i++) {
+			fire(shot.power);
+		}
+
+	}
+	
+	/**
+	 * Update the optimus's position when he scanned a robot
+	 * 
+	 * @param ScannedRobotEvent e
+	 */
+	private void updateOptimusPosition(ScannedRobotEvent e){
+		if (updatePos) {
+			double angleToEnemy = e.getBearing();
+
+			// Calculate the angle to the scanned robot
+			double angle = Math
+					.toRadians((robotStatus.getHeading() + angleToEnemy % 360));
+
+			// Calculate the coordinates of the robot
+			double posX = (robotStatus.getX() + Math.sin(angle)
+					* e.getDistance());
+			double posY = (robotStatus.getY() + Math.cos(angle)
+					* e.getDistance());
+			smartAgent.updatePosEnemy(posX, posY);
+			updatePos = false;
+		}
+	}
+
+	/**
+	 * onHitByBullet: What to do when you're hit by a bullet
+	 */
+	public void onHitByBullet(HitByBulletEvent e) {
+		
+		MovementRobot rovementRobot;
+		try {
+			smartAgent.allowsMovement = false;
+			rovementRobot = smartAgent.movementWhenHit(e.getBearing());
+			turnRight(rovementRobot.rigth);
+			turnLeft(rovementRobot.left);
+			back(rovementRobot.back);
+			ahead(rovementRobot.front);
+			smartAgent.allowsMovement = true;
+		} catch (Exception e1) {
+			smartAgent.allowsMovement = true;
+			e1.printStackTrace();
+		}
+	}
+
+	/**
+	 * onHitWall: What to do when you hit a wall
+	 */
+	public void onHitWall(HitWallEvent e) {
+		// back(500);
+		// turnRight(90);
+		// ahead(100);
+	}
+	
+	public void onRoundEnded(RoundEndedEvent event){
+	
+		if (SmartAgent.lastPosition != null) {
+			SmartAgent.lastPosition.setTimeToNextShot(Calendar.getInstance().getTimeInMillis());
+			
+			/*
+			 * Update the time resistance for all escape position
+			 * */
+			for (EscapePosition posicaoFuga : SmartAgent.escapePositionList) {
+				if (posicaoFuga.getAngleEscape() == SmartAgent.lastPosition.getAngleEscape()
+						&& posicaoFuga.getEscapeDiretion() == SmartAgent.lastPosition.getEscapeDiretion()
+						&& posicaoFuga.getShotDiretion() == SmartAgent.lastPosition.getShotDiretion()) {
+					Double tempoResistencia = ((((double) (SmartAgent.lastPosition.getTimeToNextShot() - SmartAgent.lastPosition.getTimeShot()) / 1000)) + posicaoFuga.getTimeOfResistance()) / 2;
+					
+					posicaoFuga.setTimeOfResistance(tempoResistencia);
+					break;
+					
+				}
+			}
+		}
+		
+		try {
+			FileController.reacordFile(SmartAgent.escapePositionList);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}   
+
+	
+
+}

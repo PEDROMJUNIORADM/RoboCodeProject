@@ -1,0 +1,11 @@
+package optimus;
+
+public class Shot {
+	public int bullets;
+	public double power;
+
+	public Shot(int bullets, double power) {
+		this.bullets = bullets;
+		this.power = power;
+	}
+}

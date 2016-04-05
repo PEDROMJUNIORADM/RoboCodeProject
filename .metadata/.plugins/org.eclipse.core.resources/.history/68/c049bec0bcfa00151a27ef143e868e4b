@@ -1,0 +1,56 @@
+package optimus;
+
+public class PositionEscape {
+	
+	public int shotDiretion;
+	public int escapeDiretion;
+	public int angleEscape;
+	public Double timeOfResistence;
+	
+	
+	public Double getTimeOfResistence() {
+		return timeOfResistence;
+	}
+	public void setTimeOfResistence(Double timeOfResistence) {
+		this.timeOfResistence = timeOfResistence;
+	}
+	public int getShotDiretion() {
+		return shotDiretion;
+	}
+	public void setShotDiretion(int positionShot) {
+		this.shotDiretion = positionShot;
+	}
+	public int getEscapeDiretion() {
+		return escapeDiretion;
+	}
+	public void setEscapeDiretion(int escapeDiretion) {
+		this.escapeDiretion = escapeDiretion;
+	}
+	public int getAngleEscape() {
+		return angleEscape;
+	}
+	public void setAngleEscape(int angleEscape) {
+		this.angleEscape = angleEscape;
+	}
+	
+	public String toString(){
+		
+		String retorno = shotDiretion+";"+escapeDiretion+";"+angleEscape+";"+timeOfResistence+"|";
+		
+		return retorno;
+	}
+	
+	
+	public PositionEscape clone(){
+		PositionEscape posicaoFugaClone = new PositionEscape();
+		posicaoFugaClone.setAngleEscape(this.getAngleEscape());
+		posicaoFugaClone.setEscapeDiretion(this.getEscapeDiretion());
+		posicaoFugaClone.setShotDiretion(this.getShotDiretion());
+		posicaoFugaClone.setTimeOfResistence(this.getTimeOfResistence());
+		
+		return posicaoFugaClone;
+	}
+	
+	
+
+}

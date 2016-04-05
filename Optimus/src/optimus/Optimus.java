@@ -23,7 +23,6 @@ public class Optimus extends AdvancedRobot {
 
 	private boolean updatePos = false;
 	private int timeToUpdatePosition = 0;
-	private double enemyLife = 0;
 
 	private RobotStatus robotStatus;
 	private SmartAgent smartAgent = new SmartAgent();
@@ -32,16 +31,32 @@ public class Optimus extends AdvancedRobot {
 	 * Run Forrest, run!
 	 */
 	public void run() {
-		setColors(Color.red,Color.blue,Color.green); // body,gun,radar
+		setColors(Color.RED,Color.YELLOW,Color.WHITE); // body,gun,radar
+		
 		while (true) {
 			timeToUpdatePosition++;
 			if (timeToUpdatePosition >= 5) {
 				timeToUpdatePosition = 0;
 				updatePos = true;
 			}
-			movimento();
+			movement();
 		}
 	}
+	
+	public void movement() {
+		if (smartAgent.allowsMovement) {
+			
+			/* Get the diretions */
+			MovementRobot rovementRobot = smartAgent.continuousMovement();
+			
+			turnRight(rovementRobot.rigth);
+			turnLeft(rovementRobot.left);
+			back(rovementRobot.back);
+			ahead(rovementRobot.front);
+		}
+		turnGunLeft(360);
+	}
+
 
 	/**
 	 * onScannedRobot: What to do when you see another robot
@@ -50,10 +65,40 @@ public class Optimus extends AdvancedRobot {
 	public void onStatus(StatusEvent e) {
 		this.robotStatus = e.getStatus();
 	}
-
+	
+	/**
+	 * onScannedRobot: what to do when you have a target 
+	 */
 	public void onScannedRobot(ScannedRobotEvent e) {
-		atirar(e);
+		headShot(e);
+		updateOptimusPosition(e);
+	}
+	
+	/**
+	 * Shoot!
+	 * 
+	 * @param ScannedRobotEvent
+	 */
+	public void headShot(ScannedRobotEvent e) { 
+		
+		/* Calibrate the target */
+		turnGunRight(smartAgent.target(e.getBearing(), getHeading(), getGunHeading()));
+		
+		/* Prepare a shot */
+		Shot shot = smartAgent.niceShot(e.getDistance(),getEnergy());
+		
+		for (int i = 0; i < shot.bullets; i++) {
+			fire(shot.power);
+		}
 
+	}
+	
+	/**
+	 * Update the optimus's position when he scanned a robot
+	 * 
+	 * @param ScannedRobotEvent e
+	 */
+	private void updateOptimusPosition(ScannedRobotEvent e){
 		if (updatePos) {
 			double angleToEnemy = e.getBearing();
 
@@ -76,77 +121,43 @@ public class Optimus extends AdvancedRobot {
 	 */
 	public void onHitByBullet(HitByBulletEvent e) {
 		
-		MovementRobot movimento;
+		MovementRobot rovementRobot;
 		try {
-			smartAgent.podeMovimentar = false;
-			movimento = smartAgent.hit(e.getBearing());
-			turnRight(movimento.rigth);
-			turnLeft(movimento.left);
-			back(movimento.back);
-			ahead(movimento.front);
-			smartAgent.podeMovimentar = true;
+			smartAgent.allowsMovement = false;
+			rovementRobot = smartAgent.movementWhenHit(e.getBearing());
+			turnRight(rovementRobot.rigth);
+			turnLeft(rovementRobot.left);
+			back(rovementRobot.back);
+			ahead(rovementRobot.front);
+			smartAgent.allowsMovement = true;
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			smartAgent.podeMovimentar = true;
+			smartAgent.allowsMovement = true;
 			e1.printStackTrace();
 		}
-
 	}
 
 	/**
 	 * onHitWall: What to do when you hit a wall
 	 */
 	public void onHitWall(HitWallEvent e) {
-		// Replace the next line with any behavior you would like
-		bateuParede(e);
-	}
-
-	public void movimento() {
-
-		System.out.println("Pode movimentar: " + smartAgent.podeMovimentar);
-		if (smartAgent.podeMovimentar) {
-			MovementRobot movimento = smartAgent.continuousMovement();
-			
-			turnRight(movimento.rigth);
-			turnLeft(movimento.left);
-			back(movimento.back);
-			ahead(movimento.front);
-		}
-
-		turnGunLeft(360);
-
-	}
-
-	public void atirar(ScannedRobotEvent e) { 
-		enemyLife = e.getEnergy();
-		turnGunRight(smartAgent.target(e.getBearing(), getHeading(), getGunHeading()));
-		Shot tatica = smartAgent.niceShot(e.getDistance(),
-				getEnergy());
-		for (int i = 0; i < tatica.bullets; i++) {
-			fire(tatica.power);
-		}
-
-	}
-
-	public void bateuParede(HitWallEvent e) { 
 		// back(500);
 		// turnRight(90);
 		// ahead(100);
 	}
-	
 	
 	public void onRoundEnded(RoundEndedEvent event){
 	
 		if (SmartAgent.lastPosition != null) {
 			SmartAgent.lastPosition.setTimeToNextShot(Calendar.getInstance().getTimeInMillis());
 			
-			for (PositionEscape posicaoFuga : SmartAgent.positionEscapeList) {
-				if (posicaoFuga.getAngleEscape() == SmartAgent.lastPosition.getAngleEscape()
-						&& posicaoFuga.getPositionEscape() == SmartAgent.lastPosition.getPositionEscape()
-						&& posicaoFuga.getPositionShot() == SmartAgent.lastPosition.getPositionShot()) {
-					Double tempoResistencia = ((((double) (SmartAgent.lastPosition.getTimeToNextShot() - SmartAgent.lastPosition.getTimeShot()) / 1000)) + posicaoFuga.getTimeOfResistence()) / 2;
+			/* Update the time resistance for all escape position */
+			for (EscapePosition escapePosition : SmartAgent.escapePositionList) {
+				if (escapePosition.getAngleEscape() == SmartAgent.lastPosition.getAngleEscape()
+						&& escapePosition.getEscapeDiretion() == SmartAgent.lastPosition.getEscapeDiretion()
+						&& escapePosition.getShotDiretion() == SmartAgent.lastPosition.getShotDiretion()) {
+					Double tempoResistencia = ((((double) (SmartAgent.lastPosition.getTimeToNextShot() - SmartAgent.lastPosition.getTimeShot()) / 1000)) + escapePosition.getTimeOfResistance()) / 2;
 					
-					posicaoFuga.setTimeOfResistence(tempoResistencia);
+					escapePosition.setTimeOfResistance(tempoResistencia);
 					break;
 					
 				}
@@ -154,7 +165,7 @@ public class Optimus extends AdvancedRobot {
 		}
 		
 		try {
-			FileController.reacordFile(SmartAgent.positionEscapeList);
+			FileController.reacordFile(SmartAgent.escapePositionList);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}

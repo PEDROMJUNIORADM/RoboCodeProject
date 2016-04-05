@@ -1,0 +1,310 @@
+package optimus;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import org.omg.CORBA.ULongSeqHolder;
+
+import robocode.HitByBulletEvent;
+
+public class SmartAgent {
+	
+	double enemyPositionX;
+	double enemyPositionY;
+	boolean podeMovimentar = true;
+	double enemyVelocityX = 0;
+	double enemyVelocityY = 0;
+	
+	private final int ANGLE_MOVEMENT = 10;
+	private final int NUM_ULTIMAS_ACOES = 10;
+	public static List<EscapePosition> escapePositionList = new ArrayList<EscapePosition>();
+	public static LastPosition lastPosition;
+
+	/**
+	 * Defines the directions of robot's movement.
+	 * 
+	 * @return a movement
+	 */
+	public MovementRobot continuousMovement() {
+		
+		MovementRobot continuousMovement = new MovementRobot();
+		
+		int fatorX = 1;
+		int fatorY = 1;
+
+		if (enemyPositionX > 500) {
+			fatorX = -1;
+		}
+		if (enemyPositionY > 300) {
+			fatorY = -1;
+		}
+
+		if (enemyVelocityX < 5 && enemyVelocityX >= 0) {
+			continuousMovement.rigth = 0;
+		} else if (enemyVelocityX > 10) {
+			continuousMovement.rigth = fatorX * 30;
+		} else if (enemyVelocityX > 30) {
+			continuousMovement.rigth = fatorX * 50;
+		}else{
+			continuousMovement.front = fatorX * 70;
+		}
+
+		if (enemyVelocityY < 5 && enemyVelocityY >= 0) {
+			continuousMovement.front = 0;
+		} else if (enemyVelocityY > 10) {
+			continuousMovement.front = fatorY * 30;
+		} else if (enemyVelocityY > 30) {
+			continuousMovement.front = fatorY * 50;
+		}else{
+			continuousMovement.front = fatorY * 70;
+		}
+		
+		return continuousMovement;
+	}
+	
+	/**
+	 * Defines the directions of robot's movement when Optimus is hit by a bullet
+	 * 
+	 * @param anguloBala
+	 * @return
+	 * @throws Exception
+	 */
+	public MovementRobot hit(double anguloBala) throws Exception {
+
+		int angleHit = 0;
+
+		if (anguloBala >= 90 && anguloBala < 180) {
+			angleHit = 0;
+		} else if (anguloBala >= 0 && anguloBala < 90) {
+			angleHit = 1;
+		} else if (anguloBala < 0 && anguloBala >= -90) {
+			angleHit = 2;
+		} else if (anguloBala < -90 && anguloBala >= -180) {
+			angleHit = 3;
+		}
+		
+		if (escapePositionList.isEmpty()) {
+			/* Load information about escape position */
+			loadInformation();
+			
+			/* Creating a new escape position and storage in a file */
+			generateEscapePostion();
+		}
+		
+		/* Calculate the new value of the resistance time for all escape positions storage */
+		if (lastPosition != null) {
+			updateTheResistenceTime();
+		}
+		
+		return chooseBestAngle(angleHit);
+	}
+	
+	/**
+	 * Create a new escape position and storage the data.
+	 */
+	private void generateEscapePostion(){
+		try {
+			for (int angleShot = 0; angleShot < 4; angleShot++) {
+				for(int ladoFuga = 0; ladoFuga < 4; ladoFuga++){
+					for (int h = 0; h < 19; h++) {
+						int angleMovement = h * ANGLE_MOVEMENT;
+						
+						EscapePosition positionEscape = new EscapePosition();
+						positionEscape.setAngleEscape(angleMovement);
+						positionEscape.setTimeOfResistence(new Double(0));
+						positionEscape.setShotDiretion(angleShot);
+						positionEscape.setEscapeDiretion(ladoFuga);
+						escapePositionList.add(positionEscape);
+						
+					}
+				}
+			}
+		
+			FileController.reacordFile(escapePositionList);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	/**
+	 * Put all information that is storage in the escape position list 
+	 */
+	private void loadInformation(){
+		try {
+			escapePositionList = FileController.readFile();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void updateTheResistenceTime(){
+		lastPosition.setTimeToNextShot(Calendar.getInstance().getTimeInMillis());
+		
+		for (EscapePosition positionEscape : escapePositionList) {
+			if (positionEscape.getAngleEscape() == lastPosition.getAngleEscape()
+					&& positionEscape.getEscapeDiretion() == lastPosition.getEscapeDiretion()
+					&& positionEscape.getShotDiretion() == lastPosition.getShotDiretion()) {
+				Double tempoResistencia = ((((double) (lastPosition.getTimeToNextShot() - lastPosition.getTimeShot()) / 1000)) + positionEscape.getTimeOfResistence()) / 2;
+				
+				positionEscape.setTimeOfResistence(tempoResistencia);
+				break;
+				
+			}
+		}
+	}
+	
+	public void updatePosEnemy(double posX, double posY) {
+		
+		enemyVelocityX = enemyPositionX - posX;
+		enemyVelocityY = enemyPositionY - posY;
+
+		enemyPositionX = posX;
+		enemyPositionY = posY;
+	}
+	
+	/**
+	 * Make a choose! 
+	 * 
+	 * @param posicaoTiro
+	 * @return
+	 */
+	public MovementRobot chooseBestAngle(int posicaoTiro) {
+
+		EscapePosition bestPositionEscape= new EscapePosition();
+		boolean hasPositionsNotTried = false;
+		
+		if (!escapePositionList.isEmpty()) {
+			for (EscapePosition postionEscape : escapePositionList) {
+				if (postionEscape.getShotDiretion() == posicaoTiro) {
+					if (postionEscape.getTimeOfResistence().doubleValue() == 0) {
+						bestPositionEscape = postionEscape.clone();	
+						hasPositionsNotTried = true;	
+						lastPosition = new LastPosition(postionEscape);
+						lastPosition.setTimeShot(Calendar.getInstance().getTimeInMillis());
+						break;
+					}
+				}
+			}
+		}
+		
+		if (!hasPositionsNotTried) {
+			bestPositionEscape = getHighResistance(posicaoTiro);
+			lastPosition = new LastPosition(bestPositionEscape);
+			lastPosition.setTimeShot(Calendar.getInstance().getTimeInMillis());
+		}
+		
+		
+		/* Define the escape movement */
+		switch (bestPositionEscape.getEscapeDiretion()) {
+		case 0:
+			return new MovementRobot(100, 0, 0, bestPositionEscape.getAngleEscape());
+		case 1:
+			return new MovementRobot(100, 0, bestPositionEscape.getAngleEscape(), 0);
+		case 2:
+			return new MovementRobot(0, 100, 0, bestPositionEscape.getAngleEscape());
+		case 3:
+			return new MovementRobot(0, 100, bestPositionEscape.getAngleEscape(), 0);
+		default:
+			return new MovementRobot(100, 0, 0, 0);
+		}
+
+	}
+
+	/**
+	 * Prepares a nice shot based on distance of the target, bullet's power and enemy's velocity.
+	 * 
+	 * @param distance
+	 * @param power
+	 * @return shoot
+	 */
+	public Shot niceShot(double distance, double energy) {
+		if (energy < 20) {
+			return new Shot(1, 1);
+		}
+
+		if (distance < 180) {
+			return new Shot(3, 3);
+		} else if (distance < 250) {
+			return new Shot(2, 3);
+		} else if (distance < 300) {
+			return new Shot(1, 2);
+		} else if (distance < 550) {
+			if (enemyVelocityX < 5) {
+				return new Shot(2, 3);
+			}
+			return new Shot(2, 1);
+		} else if (distance < 700) {
+			if (enemyVelocityX < 5) {
+				return new Shot(2, 3);
+			}
+			return new Shot(1, 1);
+		} else if (distance < 900) {
+			if (enemyVelocityX < 5) {
+				return new Shot(2, 3);
+			}
+			return new Shot(1, 1);
+		}
+		return new Shot(1, 1);
+	}
+
+	public double normalRelativeAngle(double angle) {
+		if (angle > -180 && angle <= 180) {
+			return angle;
+		}
+
+		double fixedAngle = angle;
+		while (fixedAngle <= -180) {
+			fixedAngle += 360;
+		}
+
+		while (fixedAngle > 180) {
+			fixedAngle -= 360;
+		}
+
+		return fixedAngle;
+	}
+
+	public double target(double enemy, double dirTanque, double dirMetralhadora) {
+		double angleShot = dirTanque + enemy - dirMetralhadora;
+		if (!(angleShot > -180 && angleShot <= 180)) {
+			while (angleShot <= -180) {
+				angleShot += 360;
+			}
+			while (angleShot > 180) {
+				angleShot -= 360;
+			}
+		}
+		return angleShot;
+	}
+
+	
+	public EscapePosition getHighResistance(int posicaoTiro){
+		Random random = new Random();
+		EscapePosition bestPosition = null;
+		for (EscapePosition postionEscape : escapePositionList) {
+			if (postionEscape.getShotDiretion() == posicaoTiro) {
+				if (bestPosition == null) {
+					bestPosition = postionEscape.clone();
+				}
+				if (postionEscape.getTimeOfResistence().doubleValue() > bestPosition.getTimeOfResistence().doubleValue()) {
+					bestPosition = postionEscape.clone();
+					
+				}else if (postionEscape.getTimeOfResistence().doubleValue() ==  bestPosition.getTimeOfResistence().doubleValue()) {					
+					int value = random.nextInt(2);
+					if (value == 0) {
+						bestPosition = postionEscape.clone();
+					}
+				}
+			}
+		}
+		return bestPosition;
+	}
+
+}

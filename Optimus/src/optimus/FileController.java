@@ -1,9 +1,6 @@
 package optimus;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,28 +12,37 @@ import robocode.RobocodeFileOutputStream;
 
 public class FileController {
 	
+	private static final int SHOT_DIRETION_INDEX = 0;
+	private static final int ESCAPE_DIRETION_INDEX = 1;
+	private static final int ANGULE_ESCAPE_INDEX = 2;
+	private static final int TIME_RESISTENCE_INDEX = 3;
 	
 	public FileController(){}
 	
 	/**
-	 * Read a file
-	 * @return
+	 * Read a file, the file structure is like this
+	 * [ [SHOT_DIRETION, ESCAPE_DIRETION, ANGULE_ESCAPE, TIME_RESISTENCE],
+	 * 	 [SHOT_DIRETION, ESCAPE_DIRETION, ANGULE_ESCAPE, TIME_RESISTENCE],
+	 *                        .................
+	 *   [SHOT_DIRETION, ESCAPE_DIRETION, ANGULE_ESCAPE, TIME_RESISTENCE] ] 
+	 *   
+	 * @return a list of escapes postions
 	 * @throws Exception
 	 */
-	public static List<PositionEscape> readFile() throws Exception{
+	public static List<EscapePosition> readFile() throws Exception{
 		File file = new File("C:/robocode/robots/optimus/Optimus.data/positionsEscape.txt");
-		List<PositionEscape> posicoesFuga = new ArrayList<PositionEscape>();
+		List<EscapePosition> posicoesFuga = new ArrayList<EscapePosition>();
 		if (file.exists()) {
 			Scanner s = new Scanner(file);
 			Pattern pattern = Pattern.compile("\\d+;\\d+;\\d+;\\d+\\.\\d+\\|");
 			while(s.hasNext()){
 				String posicao = s.next(pattern);
 				String[] posicoes = posicao.split(";");
-				PositionEscape posicaoFuga = new PositionEscape();
-				posicaoFuga.setPositionShot(Integer.parseInt(posicoes[0]));
-				posicaoFuga.setPositionEscape(Integer.parseInt(posicoes[1]));
-				posicaoFuga.setAngleEscape(Integer.parseInt(posicoes[2]));
-				posicaoFuga.setTimeOfResistence(Double.parseDouble(posicoes[3].substring(0, posicoes[3].length()-1)));
+				EscapePosition posicaoFuga = new EscapePosition();
+				posicaoFuga.setShotDiretion(Integer.parseInt(posicoes[SHOT_DIRETION_INDEX]));
+				posicaoFuga.setEscapeDiretion(Integer.parseInt(posicoes[ESCAPE_DIRETION_INDEX]));
+				posicaoFuga.setAngleEscape(Integer.parseInt(posicoes[ANGULE_ESCAPE_INDEX]));
+				posicaoFuga.setTimeOfResistance(Double.parseDouble(posicoes[TIME_RESISTENCE_INDEX].substring(0, posicoes[TIME_RESISTENCE_INDEX].length()-1)));
 				posicoesFuga.add(posicaoFuga);
 			}
 			s.close();
@@ -51,13 +57,13 @@ public class FileController {
 	 * @param positionsEscape
 	 * @throws IOException
 	 */
-	public static void reacordFile(List<PositionEscape> positionsEscape) throws IOException{
+	public static void reacordFile(List<EscapePosition> positionsEscape) throws IOException{
 		
 		File file = new File("C:/robocode/robots/optimus/Optimus.data/positionsEscape.txt");
 		RobocodeFileOutputStream fos = null;
 		try {
 			fos = new RobocodeFileOutputStream(file);
-			for (PositionEscape posicaoFuga : positionsEscape) {
+			for (EscapePosition posicaoFuga : positionsEscape) {
 				fos.write(posicaoFuga.toString().getBytes());
 			}
 			
