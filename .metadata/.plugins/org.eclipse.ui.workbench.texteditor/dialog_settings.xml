@@ -2,30 +2,30 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="positionsEscape" key="selection"/>
+		<item value="enemyVelocityX" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="posicoesFuga"/>
-			<item value="arquivo"/>
-			<item value="melhorPosicao"/>
+			<item value="enemyVelocityX"/>
+			<item value="normalRelativeAngle"/>
 			<item value="posicaoFuga"/>
-			<item value="melhorPosicaoFuga"/>
-			<item value="anguloMovimento"/>
-			<item value="anguloTiro"/>
-			<item value="anguloAtingido"/>
+			<item value="movimento"/>
+			<item value="enemyLife"/>
+			<item value="angleHit"/>
+			<item value="anguloBala"/>
+			<item value="haPosicoesNaoTestadas"/>
 		</list>
 		<list key="replacehistory">
-			<item value="positionsEscape"/>
-			<item value="file"/>
-			<item value="bestPosition"/>
-			<item value="postionEscape"/>
-			<item value="bestPositionEscape"/>
-			<item value="positionEscape"/>
-			<item value="angleMovement"/>
-			<item value="angleShot"/>
+			<item value="escapePosition"/>
+			<item value="rovementRobot"/>
+			<item value="diretionHit"/>
+			<item value="angleBullet"/>
+			<item value="hasPositionsNotTried"/>
+			<item value="escapePositionList"/>
+			<item value="headShot"/>
+			<item value="fire"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">

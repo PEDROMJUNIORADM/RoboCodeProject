@@ -277,7 +277,6 @@ public class SmartAgent {
 			if (postionEscape.getShotDiretion() == posicaoTiro) {
 				if (bestPosition == null) {
 					bestPosition = postionEscape.clone();
-				
 				}else if (postionEscape.getTimeOfResistance().doubleValue() > bestPosition.getTimeOfResistance().doubleValue()) {
 					bestPosition = postionEscape.clone();
 					

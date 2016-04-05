@@ -256,6 +256,23 @@ public class SmartAgent {
 		return new Shot(1, 1);
 	}
 
+	public double normalRelativeAngle(double angle) {
+		if (angle > -180 && angle <= 180) {
+			return angle;
+		}
+
+		double fixedAngle = angle;
+		while (fixedAngle <= -180) {
+			fixedAngle += 360;
+		}
+
+		while (fixedAngle > 180) {
+			fixedAngle -= 360;
+		}
+
+		return fixedAngle;
+	}
+
 	public double target(double enemy, double dirTanque, double dirMetralhadora) {
 		double angleShot = dirTanque + enemy - dirMetralhadora;
 		if (!(angleShot > -180 && angleShot <= 180)) {
@@ -277,8 +294,8 @@ public class SmartAgent {
 			if (postionEscape.getShotDiretion() == posicaoTiro) {
 				if (bestPosition == null) {
 					bestPosition = postionEscape.clone();
-				
-				}else if (postionEscape.getTimeOfResistance().doubleValue() > bestPosition.getTimeOfResistance().doubleValue()) {
+				}
+				if (postionEscape.getTimeOfResistance().doubleValue() > bestPosition.getTimeOfResistance().doubleValue()) {
 					bestPosition = postionEscape.clone();
 					
 				}else if (postionEscape.getTimeOfResistance().doubleValue() ==  bestPosition.getTimeOfResistance().doubleValue()) {					

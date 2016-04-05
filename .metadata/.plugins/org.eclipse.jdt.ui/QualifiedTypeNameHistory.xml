@@ -8,4 +8,7 @@
 <fullyQualifiedTypeName name="util.FileController"/>
 <fullyQualifiedTypeName name="util.SmartAgent"/>
 <fullyQualifiedTypeName name="megaman.SmartAgent"/>
+<fullyQualifiedTypeName name="optimus.LastPosition"/>
+<fullyQualifiedTypeName name="optimus.EscapePosition"/>
+<fullyQualifiedTypeName name="java.lang.Exception"/>
 </qualifiedTypeNameHistroy>
