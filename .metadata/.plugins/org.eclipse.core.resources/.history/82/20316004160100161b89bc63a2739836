@@ -1,0 +1,18 @@
+package megatron;
+
+public class Megatron {
+	
+	 double energy;
+	 double energyEnemy;
+	 double bearingFromGun;
+	 double lastBearingFronGun;
+	 double closeDistance;
+	 double farDistance;
+	 double lowEnergy;
+	 double highEnergy;
+	 double lowAggress;
+	 double moderateAggress;
+	 double highAggress;
+	 double precision;
+	
+}

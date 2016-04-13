@@ -1,0 +1,26 @@
+package megatron;
+
+import robocode.*;
+
+public class Megatron extends AdvancedRobot {
+	
+	 double energy;
+	 double energyEnemy;
+	 double bearingFromGun;
+	 double lastBearingFronGun;
+	 double closeDistance;
+	 double farDistance;
+	 double lowEnergy;
+	 double highEnergy;
+	 double lowAggress;
+	 double moderateAggress;
+	 double highAggress;
+	 double precision;
+	
+	 /**
+	  * Run, Forrest, Run!
+	  */
+	 public void run(){
+		 
+	 }
+}

@@ -1,0 +1,72 @@
+package megatron;
+
+import static robocode.util.Utils.normalRelativeAngleDegrees;
+
+import java.awt.Color;
+
+import robocode.*;
+
+public class Megatron extends AdvancedRobot {
+	
+	 double energy;
+	 double energyEnemy;
+	 double bearingFromGun;
+	 double lastBearingFronGun;
+	 double closeDistance;
+	 double farDistance;
+	 double lowEnergy;
+	 double highEnergy;
+	 double lowAggress;
+	 double moderateAggress;
+	 double highAggress;
+	 double precision;
+	
+	 /**
+	  * Run, Forrest, Run!
+	  */
+	 public void run(){
+		 wear();
+		 while(true){
+			 energy = this.getEnergy();
+			 if(lastBearingFronGun <= 0){
+				 turnLeft(10);
+			 }else{
+				 turnRight(10);
+			 }
+		 }
+	 }
+	 
+	 private void wear(){
+		 setBodyColor(Color.red);
+		 setGunColor(Color.yellow);
+		 setRadarColor(Color.white);
+		 setBulletColor(Color.cyan);
+		 setScanColor(Color.cyan);
+	 }
+	 
+	 	/**
+		 * onScannedRobot: what to do when you have a target 
+		 */
+		public void onScannedRobot(ScannedRobotEvent e) {
+			energy = this.getEnergy();
+			energyEnemy = e.getEnergy();
+			double absoluteBearing = getHeading() + e.getBearing();
+			lastBearingFronGun = bearingFromGun;
+			bearingFromGun = normalRelativeAngleDegrees(absoluteBearing	- getGunHeading());
+			
+			if (Math.abs(bearingFromGun) <= 3) {
+				turnRight(bearingFromGun);
+				if (getGunHeat() == 0) {
+					controleNebuloso(e);
+				}
+			} else {
+				turnRight(bearingFromGun);
+			}
+			
+			if (bearingFromGun == 0) {
+				scan();
+			}
+		}
+		
+		
+}

@@ -1,0 +1,116 @@
+package megatron;
+
+import static robocode.util.Utils.normalRelativeAngleDegrees;
+
+import java.awt.Color;
+
+import robocode.*;
+
+public class Megatron extends AdvancedRobot {
+	
+	 double energy;
+	 double energyEnemy;
+	 double bearingFromGun;
+	 double lastBearingFronGun;
+	 double closeDistance;
+	 double farDistance;
+	 double lowEnergy;
+	 double highEnergy;
+	 double lowAggress;
+	 double moderateAggress;
+	 double highAggress;
+	 double precision;
+	
+	 /**
+	  * Run, Forrest, Run!
+	  */
+	 public void run(){
+		 wear();
+		 while(true){
+			 energy = this.getEnergy();
+			 if(lastBearingFronGun <= 0){
+				 turnLeft(10);
+			 }else{
+				 turnRight(10);
+			 }
+		 }
+	 }
+	 
+	 private void wear(){
+		 setBodyColor(Color.red);
+		 setGunColor(Color.yellow);
+		 setRadarColor(Color.white);
+		 setBulletColor(Color.cyan);
+		 setScanColor(Color.cyan);
+	 }
+	 
+	 	/**
+		 * onScannedRobot: what to do when you have a target 
+		 */
+		public void onScannedRobot(ScannedRobotEvent e) {
+			energy = this.getEnergy();
+			energyEnemy = e.getEnergy();
+			double absoluteBearing = getHeading() + e.getBearing();
+			lastBearingFronGun = bearingFromGun;
+			bearingFromGun = normalRelativeAngleDegrees(absoluteBearing	- getGunHeading());
+			
+			if (Math.abs(bearingFromGun) <= 3) {
+				turnRight(bearingFromGun);
+				if (getGunHeat() == 0) {
+					controleNebuloso(e);
+				}
+			} else {
+				turnRight(bearingFromGun);
+			}
+			
+			if (bearingFromGun == 0) {
+				scan();
+			}
+		}
+		
+		public void onHitRobot(HitRobotEvent e) {
+			back(20);
+		}
+		
+		/**
+		 * onHitWall: What to do when you hit a wall
+		 */
+		public void onHitWall(HitWallEvent e) {
+			 back(500);
+			 turnRight(90);
+			 ahead(100);
+		}
+		
+		public void controleNebuloso(ScannedRobotEvent e) {
+			fuzificarDist(e.getDistance());
+			fuzificarEnergia(this.energy);
+			resetAgressividade();
+			gerarAgressividade();
+			
+			double forcaTiro = defuzificar();
+			fire(forcaTiro);
+			System.out.println(forcaTiro);
+			
+			ahead(10);
+		}
+		
+		private void fuzificarDist(double dist) {
+			//Perto(x)
+			if (dist <= 200) {
+				closeDistance = 1.0;
+			} else if (dist > 200 && dist < 300) {
+				closeDistance = (300.0 - dist)/100.0;
+			} else {
+				closeDistance = 0.0;
+			}
+			
+			//Longe(x)
+			if (dist <= 200) {
+				farDistance = 0.0;
+			} else if (dist > 200 && dist < 300) {
+				farDistance = (dist - 200.0)/100.0;
+			} else {
+				farDistance = 1.0;
+			}
+		}
+}

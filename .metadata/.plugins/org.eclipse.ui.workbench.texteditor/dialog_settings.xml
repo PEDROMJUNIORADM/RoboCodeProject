@@ -2,30 +2,30 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="enemyVelocityX" key="selection"/>
+		<item value="farDistance" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="enemyVelocityX"/>
-			<item value="normalRelativeAngle"/>
-			<item value="posicaoFuga"/>
-			<item value="movimento"/>
-			<item value="enemyLife"/>
-			<item value="angleHit"/>
-			<item value="anguloBala"/>
-			<item value="haPosicoesNaoTestadas"/>
+			<item value="distLongePert"/>
+			<item value="distPertoPert"/>
+			<item value="energBaixaPert"/>
+			<item value="agressBaixaPert"/>
+			<item value="agressMediaPert"/>
+			<item value="agressAltaPert"/>
+			<item value="energAltaPert"/>
+			<item value="ctr"/>
 		</list>
 		<list key="replacehistory">
-			<item value="escapePosition"/>
-			<item value="rovementRobot"/>
-			<item value="diretionHit"/>
-			<item value="angleBullet"/>
-			<item value="hasPositionsNotTried"/>
-			<item value="escapePositionList"/>
-			<item value="headShot"/>
-			<item value="fire"/>
+			<item value="farDistance"/>
+			<item value="closeDistance"/>
+			<item value="lowEnergy"/>
+			<item value="lowAggress"/>
+			<item value="moderateAggress"/>
+			<item value="highAggress"/>
+			<item value="highEnergy"/>
+			<item value="controller"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">

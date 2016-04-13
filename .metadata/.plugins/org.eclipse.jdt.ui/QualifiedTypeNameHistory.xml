@@ -11,4 +11,6 @@
 <fullyQualifiedTypeName name="optimus.LastPosition"/>
 <fullyQualifiedTypeName name="optimus.EscapePosition"/>
 <fullyQualifiedTypeName name="java.lang.Exception"/>
+<fullyQualifiedTypeName name="megatron.FuzzyVariables"/>
+<fullyQualifiedTypeName name="robocode.Robocode"/>
 </qualifiedTypeNameHistroy>

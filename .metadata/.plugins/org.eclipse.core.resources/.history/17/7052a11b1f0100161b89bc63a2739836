@@ -1,0 +1,208 @@
+package megatron;
+
+import static robocode.util.Utils.normalRelativeAngleDegrees;
+
+import java.awt.Color;
+
+import robocode.*;
+
+public class Megatron extends AdvancedRobot {
+	
+	 double energy;
+	 double energyEnemy;
+	 double bearingFromGun;
+	 double lastBearingFronGun;
+	 double closeDistance;
+	 double farDistance;
+	 double lowEnergy;
+	 double highEnergy;
+	 double lowAggress;
+	 double moderateAggress;
+	 double highAggress;
+	 double precision;
+	
+	 /**
+	  * Run, Forrest, Run!
+	  */
+	 public void run(){
+		 wear();
+		 while(true){
+			 energy = this.getEnergy();
+			 if(lastBearingFronGun <= 0){
+				 turnLeft(10);
+			 }else{
+				 turnRight(10);
+			 }
+		 }
+	 }
+	 
+	 private void wear(){
+		 setBodyColor(Color.red);
+		 setGunColor(Color.yellow);
+		 setRadarColor(Color.white);
+		 setBulletColor(Color.cyan);
+		 setScanColor(Color.cyan);
+	 }
+	 
+	 	/**
+		 * onScannedRobot: what to do when you have a target 
+		 */
+		public void onScannedRobot(ScannedRobotEvent e) {
+			energy = this.getEnergy();
+			energyEnemy = e.getEnergy();
+			double absoluteBearing = getHeading() + e.getBearing();
+			lastBearingFronGun = bearingFromGun;
+			bearingFromGun = normalRelativeAngleDegrees(absoluteBearing	- getGunHeading());
+			
+			if (Math.abs(bearingFromGun) <= 3) {
+				turnRight(bearingFromGun);
+				if (getGunHeat() == 0) {
+					controleNebuloso(e);
+				}
+			} else {
+				turnRight(bearingFromGun);
+			}
+			
+			if (bearingFromGun == 0) {
+				scan();
+			}
+		}
+		
+		public void onHitRobot(HitRobotEvent e) {
+			back(20);
+		}
+		
+		/**
+		 * onHitWall: What to do when you hit a wall
+		 */
+		public void onHitWall(HitWallEvent e) {
+			 back(500);
+			 turnRight(90);
+			 ahead(100);
+		}
+		
+		public void controleNebuloso(ScannedRobotEvent e) {
+			fuzificarDist(e.getDistance());
+			fuzificarenergy(this.energy);
+			resetAgressividade();
+			gerarAgressividade();
+			
+			double forcaTiro = defuzificar();
+			fire(forcaTiro);
+			System.out.println(forcaTiro);
+			
+			ahead(10);
+		}
+		
+		private void fuzificarDist(double dist) {
+			//Perto(x)
+			if (dist <= 200) {
+				closeDistance = 1.0;
+			} else if (dist > 200 && dist < 300) {
+				closeDistance = (300.0 - dist)/100.0;
+			} else {
+				closeDistance = 0.0;
+			}
+			
+			//Longe(x)
+			if (dist <= 200) {
+				farDistance = 0.0;
+			} else if (dist > 200 && dist < 300) {
+				farDistance = (dist - 200.0)/100.0;
+			} else {
+				farDistance = 1.0;
+			}
+		}
+		
+		private void fuzificarenergy(double energy) {
+			//Baixa(x)
+			if (energy <= 30.0) {
+				lowEnergy = 1.0;
+			} else if (energy > 30.0 && energy < 50.0) {
+				lowEnergy = (50.0 - energy)/20.0;
+			} else {
+				lowEnergy = 0.0;
+			}
+			
+			//Alta(x)
+			if (energy <= 30.0) {
+				highEnergy = 0.0;
+			} else if (energy > 30.0 && energy < 50.0) {
+				highEnergy = (energy - 30.0)/20.0;
+			} else {
+				highEnergy = 1.0;
+			}
+		}
+		
+		private void resetAgressividade() {
+			lowAggress = 0.0;
+			moderateAggress = 0.0;
+			highAggress = 0.0;
+		}
+		
+		private double defuzificar() {
+			double nivelDeSaida = 0.0;
+			double ctr = 0.0;
+			
+			for (double i = 0.0; i <= 3.0; i+=precision) {
+				
+				//Agressividade Baixa
+				if (i >= 0.0 && i < 1.0) {
+					if (lowAggress != 0) {
+						nivelDeSaida += lowAggress*i;
+						ctr++;
+					}
+				}
+				
+				//Agressividade Baixa-M�dia
+				else if (i >= 1.0 && i <= 1.5) {
+					if (lowAggress > moderateAggress) {
+						if (lowAggress > 0) {
+							nivelDeSaida += lowAggress*i;
+							ctr++;
+						}
+					} else {
+						if (moderateAggress > 0) {
+							nivelDeSaida += moderateAggress*i;
+							ctr++;
+						}
+					}
+				}
+				
+				//Agressividade M�dia
+				else if (i > 1.5 && i < 2.0) {
+					if (moderateAggress > 0) {
+						nivelDeSaida += moderateAggress*i;
+						ctr++;
+					}
+				}
+				
+				//Agressividade M�dia-Alta
+				else if (i >= 2.0 && i <= 2.5) {
+					if (moderateAggress > highAggress) {
+						if (moderateAggress > 0) {
+							nivelDeSaida += moderateAggress*i;
+							ctr++;
+						}
+					} else {
+						if (highAggress > 0) {
+							nivelDeSaida += highAggress*i;
+							ctr++;
+						}
+					}
+				}
+				
+				//Agressividade Alta
+				else if (i > 2.5) {
+					if (highAggress > 0) {
+						nivelDeSaida += highAggress*i;
+						ctr++;
+					}
+				}		
+			}
+			
+			nivelDeSaida /= ctr;
+			
+			return nivelDeSaida;
+		}
+}

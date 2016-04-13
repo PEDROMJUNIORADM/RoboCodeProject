@@ -1,0 +1,31 @@
+package megatron;
+
+static class FuzzyVariables {
+	
+	static double energy;
+	static double energyEnemy;
+	static double bearingFromGun;
+	static double lastBearingFronGun;
+	static double closeDistance;
+	static double farDistance;
+	static double lowEnergy;
+	static double highEnergy;
+	static double lowAggress;
+	static double moderateAggress;
+	static double highAggress;
+	static double precision;
+	
+	public static void inicialize(){
+		energyEnemy = 0;
+		bearingFromGun = 0;
+		lastBearingFronGun= 0;
+		closeDistance = 0;
+		farDistance = 0;
+		lowEnergy = 0;
+		highEnergy = 0;
+		lowAggress = 0;
+		moderateAggress = 0;
+		highAggress = 0;
+		precision = 0.01;
+	}
+}

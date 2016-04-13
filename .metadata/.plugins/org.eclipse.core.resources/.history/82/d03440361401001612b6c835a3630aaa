@@ -1,0 +1,20 @@
+package megatron;
+
+public class FuzzyVariables {
+	
+	double energy;
+	double bearingFromGun;
+	double lastBearingFronGun;
+	double closeDistance;
+	double farDistance;
+	double lowEnergy;
+	double highEnergy;
+	double lowAggress;
+	double moderateAggress;
+	double highAggress;
+	double precision;
+	
+	public static inicialize(){
+		
+	}
+}
