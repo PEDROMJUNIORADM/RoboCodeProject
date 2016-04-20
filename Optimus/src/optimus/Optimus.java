@@ -85,7 +85,7 @@ public class Optimus extends AdvancedRobot {
 		turnGunRight(smartAgent.target(e.getBearing(), getHeading(), getGunHeading()));
 		
 		/* Prepare a shot */
-		Shot shot = smartAgent.niceShot(e.getDistance(),getEnergy());
+		Shot shot = smartAgent.fuzzyShot(e.getDistance(),getEnergy());
 		
 		for (int i = 0; i < shot.bullets; i++) {
 			fire(shot.power);

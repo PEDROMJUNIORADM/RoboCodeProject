@@ -19,7 +19,7 @@ public class Megatron extends AdvancedRobot {
 	 double lowAggress = 0;
 	 double moderateAggress = 0;
 	 double highAggress = 0;
-	 double precision = 0.01;
+	 double precision = 0.05;
 	
 	 /**
 	  * Run, Forrest, Run!
@@ -88,6 +88,7 @@ public class Megatron extends AdvancedRobot {
 			gerarAgressividade();
 			
 			double forcaTiro = defuzificar();
+			//double forcaTiro = atirar(e.getDistance());
 			fire(forcaTiro);
 			System.out.println(forcaTiro);
 			
@@ -95,41 +96,27 @@ public class Megatron extends AdvancedRobot {
 		}
 		
 		private void fuzificarDist(double dist) {
-			//Perto(x)
 			if (dist <= 200) {
 				closeDistance = 1.0;
-			} else if (dist > 200 && dist < 300) {
-				closeDistance = (300.0 - dist)/100.0;
-			} else {
-				closeDistance = 0.0;
-			}
-			
-			//Longe(x)
-			if (dist <= 200) {
 				farDistance = 0.0;
 			} else if (dist > 200 && dist < 300) {
+				closeDistance = (300.0 - dist)/100.0;
 				farDistance = (dist - 200.0)/100.0;
 			} else {
+				closeDistance = 0.0;
 				farDistance = 1.0;
 			}
 		}
 		
 		private void fuzificarenergy(double energy) {
-			//Baixa(x)
 			if (energy <= 30.0) {
 				lowEnergy = 1.0;
-			} else if (energy > 30.0 && energy < 50.0) {
-				lowEnergy = (50.0 - energy)/20.0;
-			} else {
-				lowEnergy = 0.0;
-			}
-			
-			//Alta(x)
-			if (energy <= 30.0) {
 				highEnergy = 0.0;
 			} else if (energy > 30.0 && energy < 50.0) {
+				lowEnergy = (50.0 - energy)/20.0;
 				highEnergy = (energy - 30.0)/20.0;
 			} else {
+				lowEnergy = 0.0;
 				highEnergy = 1.0;
 			}
 		}
@@ -138,6 +125,25 @@ public class Megatron extends AdvancedRobot {
 			lowAggress = 0.0;
 			moderateAggress = 0.0;
 			highAggress = 0.0;
+		}
+		
+		private double atirar(double dist){
+			double forcaTiro = 0;
+			if(dist <= 200){
+				// Se a arma estiver pronta
+				if (getGunHeat() == 0) {
+					   /* forca do tiro vai ser igual a porcentagem da agressividade
+					    *  multiplicada pela forca maxima do tiro
+					    */
+					forcaTiro = Rules.MAX_BULLET_POWER * highAggress;
+				}
+			}else if( dist > 200 && dist < 300){
+				forcaTiro =  Rules.MAX_BULLET_POWER * moderateAggress;
+			}else{
+				forcaTiro =  Rules.MAX_BULLET_POWER * lowAggress;
+			}
+			
+			return forcaTiro;
 		}
 		
 		private double defuzificar() {
@@ -154,7 +160,7 @@ public class Megatron extends AdvancedRobot {
 					}
 				}
 				
-				//Agressividade Baixa-M�dia
+				//Agressividade Baixa-Media
 				else if (i >= 1.0 && i <= 1.5) {
 					if (lowAggress > moderateAggress) {
 						if (lowAggress > 0) {
@@ -169,7 +175,7 @@ public class Megatron extends AdvancedRobot {
 					}
 				}
 				
-				//Agressividade M�dia
+				//Agressividade Media
 				else if (i > 1.5 && i < 2.0) {
 					if (moderateAggress > 0) {
 						outputLevel += moderateAggress*i;
@@ -177,7 +183,7 @@ public class Megatron extends AdvancedRobot {
 					}
 				}
 				
-				//Agressividade M�dia-Alta
+				//Agressividade Media-Alta
 				else if (i >= 2.0 && i <= 2.5) {
 					if (moderateAggress > highAggress) {
 						if (moderateAggress > 0) {

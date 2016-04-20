@@ -1,0 +1,113 @@
+package megatron;
+
+import java.util.logging.Logger;
+
+/**
+ * Class for various math operations on angles.
+ *
+ * @author XyC
+ */
+    public class AngleUtils {
+
+    public AngleUtils() {
+    }
+
+    static public double radiansFullModulo(double angle) {
+        Logger log = Logger.getLogger(AngleUtils.class.getName());
+        log.entering(AngleUtils.class.getName(), "radiansFullModulo", angle);
+        double ret = angle % (Math.PI * 2);
+        log.exiting(AngleUtils.class.getName(), "radiansFullModulo", ret);
+        return ret;
+    }
+
+    static public double radiansHalfModulo(double angle) {
+        Logger log = Logger.getLogger(AngleUtils.class.getName());
+        log.entering(AngleUtils.class.getName(), "radiansHalfModulo", angle);
+        double ret;
+        ret = angle % (Math.PI * 2);
+        if(ret > Math.PI) {
+            ret = ret - 2 * Math.PI;
+        }
+        if(ret < - Math.PI) {
+            ret = 2 * Math.PI + ret;
+        }
+        log.exiting(AngleUtils.class.getName(), "radiansHalfModulo", ret);
+        return ret;
+    }
+
+    static public double degreesFullModulo(double angle) {
+        Logger log = Logger.getLogger(AngleUtils.class.getName());
+        log.entering(AngleUtils.class.getName(), "degreesFullModulo", angle);
+        double ret = angle % 360;
+        log.exiting(AngleUtils.class.getName(), "degreesFullModulo", ret);
+        return ret;
+    }
+
+    static public double degreesHalfModulo(double angle) {
+        Logger log = Logger.getLogger(AngleUtils.class.getName());
+        log.entering(AngleUtils.class.getName(), "degreesHalfModulo", angle);
+        double ret;
+        ret = angle % 360;
+        if(ret > 180) {
+            ret = ret - 360;
+        }
+        if(ret < -180) {
+            ret = 360 + ret;
+        }
+        log.exiting(AngleUtils.class.getName(), "degreesHalfModulo", ret);
+        return ret;
+    }
+
+    static public double radians180to360(double angle) {
+        Logger log = Logger.getLogger(AngleUtils.class.getName());
+        log.entering(AngleUtils.class.getName(), "radians180to360", angle);
+        double ret;
+        if(angle > 0) {
+            ret = angle;
+        } else {
+            ret = 2 * Math.PI + angle;
+        }
+        log.exiting(AngleUtils.class.getName(), "radians180to360", ret);
+        return ret;
+    }
+
+    static public double radians360to180(double angle) {
+        Logger log = Logger.getLogger(AngleUtils.class.getName());
+        log.entering(AngleUtils.class.getName(), "radians360to180", angle);
+        double ret;
+        if(angle > Math.PI) {
+            ret = angle - 2 * Math.PI;
+        } else {
+            ret = angle;
+        }
+        log.exiting(AngleUtils.class.getName(), "radians360to180", ret);
+        return ret;
+    }
+
+    static public double degrees180to360(double angle) {
+        Logger log = Logger.getLogger(AngleUtils.class.getName());
+        log.entering(AngleUtils.class.getName(), "degrees180to360", angle);
+        double ret;
+        if(angle > 0) {
+            ret = angle;
+        } else {
+            ret = 360 + angle;
+        }
+        log.exiting(AngleUtils.class.getName(), "degrees180to360", ret);
+        return ret;
+    }
+
+    static public double degrees360to180(double angle) {
+        Logger log = Logger.getLogger(AngleUtils.class.getName());
+        log.entering(AngleUtils.class.getName(), "degrees360to180", angle);
+        double ret;
+        if(angle > 180) {
+            ret = angle - 360;
+        } else {
+            ret = angle;
+        }
+        log.exiting(AngleUtils.class.getName(), "degrees360to180", ret);
+        return ret;
+    }
+    
+}

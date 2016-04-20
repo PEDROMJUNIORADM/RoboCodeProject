@@ -1,17 +1,12 @@
 package optimus;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
-import org.omg.CORBA.ULongSeqHolder;
-
-import robocode.HitByBulletEvent;
+import robocode.Rules;
 
 public class SmartAgent {
 	
@@ -226,34 +221,47 @@ public class SmartAgent {
 	 * @param power
 	 * @return shoot
 	 */
-	public Shot niceShot(double distance, double energy) {
+	public Shot fuzzyShot(double distance, double energy) {
+		double forcaMaxima = Rules.MAX_BULLET_POWER;
+		
 		if (energy < 20) {
 			return new Shot(1, 1);
 		}
-
-		if (distance < 180) {
-			return new Shot(3, 3);
-		} else if (distance < 250) {
-			return new Shot(2, 3);
-		} else if (distance < 300) {
-			return new Shot(1, 2);
-		} else if (distance < 550) {
-			if (enemyVelocityX < 5) {
-				return new Shot(2, 3);
+		
+		if(distance <= 50){
+			return new Shot(3, forcaMaxima);
+		}else if(distance > 50 && distance <= 100 ){
+			return new Shot(3, forcaMaxima*0.9);
+		}else if(distance > 100 && distance < 200){
+			return new Shot(3, forcaMaxima*0.8);
+		}else if(distance >= 200 && distance < 300){
+			return new Shot(3, forcaMaxima*0.7);
+		}else if(distance >= 300 && distance < 400){
+			if(enemyVelocityX < 5){
+				return new Shot(3, forcaMaxima*0.6);
 			}
-			return new Shot(2, 1);
-		} else if (distance < 700) {
-			if (enemyVelocityX < 5) {
-				return new Shot(2, 3);
+			return new Shot(3, forcaMaxima*0.33);
+		}else if(distance >= 400 && distance < 500){
+			if(enemyVelocityX < 5){
+				return new Shot(3, forcaMaxima*0.5);
 			}
-			return new Shot(1, 1);
-		} else if (distance < 900) {
-			if (enemyVelocityX < 5) {
-				return new Shot(2, 3);
+			return new Shot(3, forcaMaxima*0.33);
+		}else if(distance >= 500 && distance < 600){
+			if(enemyVelocityX < 5){
+				return new Shot(3, forcaMaxima*0.45);
 			}
-			return new Shot(1, 1);
+			return new Shot(3, forcaMaxima*0.33);
+		}else if(distance >= 600 && distance < 700){
+			if(enemyVelocityX < 5){
+				return new Shot(3, forcaMaxima*0.4);
+			}
+			return new Shot(3, forcaMaxima*0.33);
+		}else if(distance >= 700 && distance < 800){
+			return new Shot(3, forcaMaxima*0.33);
+		}else{
+			return new Shot(3, forcaMaxima*0.2);
 		}
-		return new Shot(1, 1);
+		
 	}
 
 	public double target(double enemy, double dirTanque, double dirMetralhadora) {

@@ -1,0 +1,112 @@
+package megatron;
+package pl.extremme.robocode.stefan;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import pl.extremme.robocode.utils.AngleUtils;
+import robocode.AdvancedRobot;
+import robocode.Rules;
+import robocode.ScannedRobotEvent;
+
+/**
+ * Stefan's implementation
+ *
+ * @author XyC
+ */
+public class Stefan extends AdvancedRobot {
+
+    private double M_WIDTH;
+    private double M_HEIGHT;
+    private double M_RADAR_SPEED;
+
+    private double M_SCANNED_X = -1;
+    private double M_SCANNED_Y = -1;
+
+    private boolean m_GunFiring;
+    private boolean m_GunRotating;
+    private double m_Run = 1;
+
+    {
+        this.M_HEIGHT = -1;
+        this.M_WIDTH = -1;
+        this.M_RADAR_SPEED = 30;
+        this.m_GunFiring = false;
+        this.m_GunRotating = false;
+    }
+
+    public Stefan() {
+    }
+
+    @Override
+    public void run() {
+        if (this.M_HEIGHT == -1 || this.M_WIDTH == -1) {
+            this.M_HEIGHT = super.getBattleFieldHeight();
+            this.M_WIDTH = super.getBattleFieldWidth();
+            this.setAdjustGunForRobotTurn(true);
+            this.setAdjustRadarForGunTurn(true);
+            this.setAdjustRadarForRobotTurn(true);
+        }
+        do {
+            System.out.println("LOOP");
+            super.execute();
+            if (super.getGunTurnRemaining() == 0 && this.m_GunRotating == true) {
+                System.out.println("Loading...");
+                this.m_GunRotating = false;
+            }
+            double gun_hot = super.getGunHeat();
+            if (this.m_GunFiring == true && this.m_GunRotating == false && gun_hot == 0) {
+                System.out.println("Fire!");
+                super.setFire(Rules.MAX_BULLET_POWER);
+                this.m_GunFiring = false;
+            }
+            else if(gun_hot > 0) {
+                System.out.println("Gun hot...");
+            }
+            super.setTurnRadarRight(this.M_RADAR_SPEED);
+        } while (true);
+    }
+
+    @Override
+    public void onScannedRobot(ScannedRobotEvent arg0) {
+        if (this.m_GunRotating == false && this.m_GunFiring == false) {
+            double mine_angle = super.getHeadingRadians();
+            System.out.println("Tank heading: " + Math.toDegrees(mine_angle));
+            double foe_bearing = arg0.getBearingRadians();
+            System.out.println("Foe bearing: " + Math.toDegrees(foe_bearing));
+            double foe_angle = AngleUtils.radians180to360(foe_bearing);
+            System.out.println("Foe angle: " + Math.toDegrees(foe_angle));
+            double gun_angle = super.getGunHeadingRadians();
+            System.out.println("Gun heading: " + Math.toDegrees(gun_angle));
+            double dg = gun_angle - mine_angle;
+            System.out.println("Gun <> Mine: " + Math.toDegrees(dg));
+            double gun_bearing = AngleUtils.radians360to180(dg);
+            System.out.println("Gun bearing: " + Math.toDegrees(gun_bearing));
+            double abs_angle = AngleUtils.radiansFullModulo(mine_angle + foe_angle);
+            System.out.println("Foe heading: " + Math.toDegrees(abs_angle));
+            double mine_x = super.getX();
+            double mine_y = super.getY();
+            double distance = arg0.getDistance();
+            double dx = Math.sin(abs_angle) * distance;
+            double dy = Math.cos(abs_angle) * distance;
+            double foe_x = mine_x + dx;
+            double foe_y = mine_y + dy;
+            M_SCANNED_X = foe_x;
+            M_SCANNED_Y = foe_y;
+            double dt = AngleUtils.radiansHalfModulo(foe_bearing - gun_bearing);
+            System.out.println("Gun <> Foe: " + Math.toDegrees(dt));
+            super.setTurnGunRightRadians(dt);
+            this.m_GunFiring = true;
+            this.m_GunRotating = true;
+            System.out.println("Targeting...");
+        }
+    }
+
+    @Override
+    public void onPaint(Graphics2D arg0) {
+        arg0.setColor(new Color(0xff, 0x00, 0x00, 0x80));
+        arg0.drawLine((int)M_SCANNED_X, (int)M_SCANNED_Y, (int)getX(), (int)getY());
+        arg0.fillOval((int)M_SCANNED_X - (25 >> 1), (int)M_SCANNED_Y - (25 >> 1), 25, 25);
+    }
+    
+}
+}
