@@ -126,6 +126,7 @@ public class Megatron extends AdvancedRobot {
 			highAggress = 0.0;
 		}
 		
+
 		private double defuzificar() {
 			double outputLevel = 0.0;
 			double controller = 0.0;

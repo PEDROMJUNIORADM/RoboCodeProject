@@ -126,6 +126,25 @@ public class Megatron extends AdvancedRobot {
 			highAggress = 0.0;
 		}
 		
+		private double atirar(double dist){
+			double forcaTiro = 0;
+			if(dist <= 200){
+				// Se a arma estiver pronta
+				if (getGunHeat() == 0) {
+					   /* forca do tiro vai ser igual a porcentagem da agressividade
+					    *  multiplicada pela forca maxima do tiro
+					    */
+					forcaTiro = Rules.MAX_BULLET_POWER * highAggress;
+				}
+			}else if( dist > 200 && dist < 300){
+				forcaTiro =  Rules.MAX_BULLET_POWER * moderateAggress;
+			}else{
+				forcaTiro =  Rules.MAX_BULLET_POWER * lowAggress;
+			}
+			
+			return forcaTiro;
+		}
+		
 		private double defuzificar() {
 			double outputLevel = 0.0;
 			double controller = 0.0;
